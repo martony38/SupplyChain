@@ -44,9 +44,6 @@ contract SupplyChain {
         uint256 productID; // Product ID potentially a combination of upc + sku
         string productNotes; // Product Notes
         uint256 productPrice; // Product Price
-        uint256 distributorFee;
-        uint256 retailerFee;
-        uint256 productTotalPrice;
         State itemState; // Product State as represented in the enum above
         address payable distributorID; // Metamask-Ethereum address of the Distributor
         address payable retailerID; // Metamask-Ethereum address of the Retailer
@@ -90,7 +87,7 @@ contract SupplyChain {
     // Define a modifier that checks the price and refunds the remaining balance
     modifier checkValue(uint256 _upc) {
         _;
-        uint256 _price = items[_upc].productTotalPrice;
+        uint256 _price = items[_upc].productPrice;
         uint256 amountToReturn = msg.value - _price;
 
         // TODO: maybe this should be consumerID
@@ -205,9 +202,6 @@ contract SupplyChain {
             productID: _upc + sku,
             productNotes: _productNotes,
             productPrice: 0,
-            distributorFee: 0,
-            retailerFee: 0,
-            productTotalPrice: 0,
             itemState: State.Harvested,
             distributorID: address(0),
             retailerID: address(0),
@@ -260,7 +254,6 @@ contract SupplyChain {
     {
         // Update the appropriate fields
         items[_upc].productPrice = _price;
-        items[_upc].productTotalPrice = _price;
         items[_upc].itemState = State.ForSale;
 
         // Emit the appropriate event
@@ -277,7 +270,7 @@ contract SupplyChain {
         // Call modifier to check if upc has passed previous supply chain stage
         forSale(_upc)
         // Call modifer to check if buyer has paid enough
-        paidEnough(items[_upc].productTotalPrice)
+        paidEnough(items[_upc].productPrice)
         // Call modifer to send any excess ether back to buyer
         checkValue(_upc)
     {
@@ -287,23 +280,10 @@ contract SupplyChain {
         items[_upc].distributorID = msg.sender;
 
         // Transfer money to farmer
-        items[_upc].originFarmerID.transfer(items[_upc].productTotalPrice);
+        items[_upc].originFarmerID.transfer(items[_upc].productPrice);
 
         // emit the appropriate event
         emit Sold(_upc);
-    }
-
-    function addDistributorFee(uint256 _upc, uint256 _fee)
-        public
-        // Call modifier to check if upc has passed previous supply chain stage
-        sold(_upc)
-        // Call modifier to verify caller of this function
-        verifyCaller(items[_upc].distributorID)
-    {
-        // Update price
-        uint256 _price = items[_upc].productTotalPrice;
-        items[_upc].distributorFee = _fee;
-        items[_upc].productTotalPrice = _price + _fee;
     }
 
     // Define a function 'shipOil' that allows the distributor to mark an item 'Shipped'
@@ -330,7 +310,7 @@ contract SupplyChain {
         // Call modifier to check if upc has passed previous supply chain stage
         shipped(_upc)
         // Call modifer to check if buyer has paid enough
-        paidEnough(items[_upc].productTotalPrice)
+        paidEnough(items[_upc].productPrice)
         // Call modifer to send any excess ether back to buyer
         checkValue(_upc)
     {
@@ -340,23 +320,10 @@ contract SupplyChain {
         items[_upc].retailerID = msg.sender;
 
         // Transfer money to owner
-        items[_upc].distributorID.transfer(items[_upc].productTotalPrice);
+        items[_upc].distributorID.transfer(items[_upc].productPrice);
 
         // Emit the appropriate event
         emit Received(_upc);
-    }
-
-    function addRetailerFee(uint256 _upc, uint256 _fee)
-        public
-        // Call modifier to check if upc has passed previous supply chain stage
-        received(_upc)
-        // Call modifier to verify caller of this function
-        verifyCaller(items[_upc].retailerID)
-    {
-        // Update price
-        uint256 _price = items[_upc].productTotalPrice;
-        items[_upc].retailerFee = _fee;
-        items[_upc].productTotalPrice = _price + _fee;
     }
 
     // Define a function 'purchaseOil' that allows the consumer to mark an item 'Purchased'
@@ -367,7 +334,7 @@ contract SupplyChain {
         // Call modifier to check if upc has passed previous supply chain stage
         received(_upc)
         // Call modifer to check if buyer has paid enough
-        paidEnough(items[_upc].productTotalPrice)
+        paidEnough(items[_upc].productPrice)
         // Call modifer to send any excess ether back to buyer
         checkValue(_upc)
     {
@@ -377,7 +344,7 @@ contract SupplyChain {
         items[_upc].consumerID = msg.sender;
 
         // Transfer money to owner
-        items[_upc].retailerID.transfer(items[_upc].productTotalPrice);
+        items[_upc].retailerID.transfer(items[_upc].productPrice);
 
         // Emit the appropriate event
         emit Purchased(_upc);
@@ -430,24 +397,18 @@ contract SupplyChain {
             uint256 productID,
             string memory productNotes,
             uint256 productPrice,
-            uint256 distributorFee,
-            uint256 retailerFee,
-            uint256 productTotalPrice,
             uint256 itemState,
             address distributorID,
             address retailerID,
             address consumerID
         )
     {
-        // Assign values to the 12 parameters
+        // Assign values to the 9 parameters
         itemSKU = items[_upc].sku;
         itemUPC = items[_upc].upc;
         productID = items[_upc].productID;
         productNotes = items[_upc].productNotes;
         productPrice = items[_upc].productPrice;
-        distributorFee = items[_upc].distributorFee;
-        retailerFee = items[_upc].retailerFee;
-        productTotalPrice = items[_upc].productTotalPrice;
         itemState = uint256(items[_upc].itemState);
         distributorID = items[_upc].distributorID;
         retailerID = items[_upc].retailerID;
@@ -459,9 +420,6 @@ contract SupplyChain {
             productID,
             productNotes,
             productPrice,
-            distributorFee,
-            retailerFee,
-            productTotalPrice,
             itemState,
             distributorID,
             retailerID,

@@ -1,22 +1,4 @@
-# Assets
+Node v10.16.0
+Truffle v5.0.27
 
-- olive trees
-  - location
-- olives
-  - location
-- olive oil
-
-# Actors
-
-- farmer
-  - harvest
-  - transport
-- procesor (oil maker)
-  - receive
-  - process
-  - pack
-- distributor
-  - ship
-- retailer
-  - sell
-- consumer
+`event.watch` is no longer supported in latest web3 version, installed `truffle-assertions` package to test events instead.
