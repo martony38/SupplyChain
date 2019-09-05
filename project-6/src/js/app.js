@@ -287,7 +287,11 @@ App = {
 
     App.contracts.SupplyChain.deployed()
       .then(function(instance) {
-        return instance.receiveOil(App.upc, { from: App.metamaskAccountID });
+        const walletValue = web3.toWei(3, "ether");
+        return instance.receiveOil(App.upc, {
+          from: App.metamaskAccountID,
+          value: walletValue
+        });
       })
       .then(function(result) {
         $("#ftc-item").text(result);
@@ -304,7 +308,11 @@ App = {
 
     App.contracts.SupplyChain.deployed()
       .then(function(instance) {
-        return instance.purchaseOil(App.upc, { from: App.metamaskAccountID });
+        const walletValue = web3.toWei(3, "ether");
+        return instance.purchaseOil(App.upc, {
+          from: App.metamaskAccountID,
+          value: walletValue
+        });
       })
       .then(function(result) {
         $("#ftc-item").text(result);
