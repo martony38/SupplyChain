@@ -6,6 +6,8 @@ UML diagrams are located in `/uml` folder.
 
 `event.watch` is no longer supported in latest web3 versions. The `truffle-assertions` package is used to test events instead.
 
+Added [Prettier](https://github.com/prettier/prettier) and its [solidity plugin](https://github.com/prettier-solidity/prettier-plugin-solidity) to format files.
+
 # Contract Address
 
 contract_address_placeholder
