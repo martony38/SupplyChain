@@ -119,6 +119,12 @@ App = {
 
   bindEvents: function() {
     $(document).on("click", App.handleButtonClick);
+    $("input").on("change", App.handleInput);
+  },
+
+  handleInput: async function(event) {
+    console.log(event.target.id, event.target.value);
+    App[event.target.id] = event.target.value;
   },
 
   handleButtonClick: async function(event) {
@@ -160,6 +166,18 @@ App = {
       case 10:
         return await App.fetchItemBufferTwo(event);
         break;
+      case 11:
+        return await App.addFarmer(event);
+        break;
+      case 12:
+        return await App.addDistributor(event);
+        break;
+      case 13:
+        return await App.addRetailer(event);
+        break;
+      case 14:
+        return await App.addConsumer(event);
+        break;
     }
   },
 
@@ -182,6 +200,79 @@ App = {
       .then(function(result) {
         $("#ftc-item").text(result);
         console.log("harvestOlives", result);
+      })
+      .catch(function(err) {
+        console.log(err.message);
+      });
+  },
+
+  addFarmer: function(event) {
+    event.preventDefault();
+
+    App.contracts.SupplyChain.deployed()
+      .then(function(instance) {
+        return instance.addFarmer(App.originFarmerID, {
+          from: App.metamaskAccountID,
+          gasPrice: 0
+        });
+      })
+      .then(function(result) {
+        //$("#ftc-item").text(result);
+        console.log("addFarmer", result);
+      })
+      .catch(function(err) {
+        console.log(err.message);
+      });
+  },
+
+  addDistributor: function(event) {
+    event.preventDefault();
+
+    App.contracts.SupplyChain.deployed()
+      .then(function(instance) {
+        return instance.addDistributor(App.distributorID, {
+          from: App.metamaskAccountID
+        });
+      })
+      .then(function(result) {
+        //$("#ftc-item").text(result);
+        console.log("addDistributor", result);
+      })
+      .catch(function(err) {
+        console.log(err.message);
+      });
+  },
+
+  addRetailer: function(event) {
+    event.preventDefault();
+
+    App.contracts.SupplyChain.deployed()
+      .then(function(instance) {
+        return instance.addRetailer(App.retailerID, {
+          from: App.metamaskAccountID
+        });
+      })
+      .then(function(result) {
+        //$("#ftc-item").text(result);
+        console.log("addRetailer", result);
+      })
+      .catch(function(err) {
+        console.log(err.message);
+      });
+  },
+
+  addConsumer: function(event) {
+    event.preventDefault();
+
+    App.contracts.SupplyChain.deployed()
+      .then(function(instance) {
+        return instance.addConsumer(App.consumerID, {
+          from: App.metamaskAccountID
+        });
+      })
+      .then(function(result) {
+        //$("#ftc-item").text(result);
+        console.log("addConsumer", result);
       })
       .catch(function(err) {
         console.log(err.message);
