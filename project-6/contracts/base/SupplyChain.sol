@@ -1,6 +1,13 @@
 pragma solidity ^0.5.8;
+
+import '../accesscontrol/FarmerRole.sol';
+import '../accesscontrol/DistributorRole.sol';
+import '../accesscontrol/RetailerRole.sol';
+import '../accesscontrol/ConsumerRole.sol';
+
 // Define a contract 'Supplychain'
-contract SupplyChain {
+contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole {
+
     // Define 'owner'
     address payable owner;
 
@@ -188,7 +195,7 @@ contract SupplyChain {
         string memory _originFarmLatitude,
         string memory _originFarmLongitude,
         string memory _productNotes
-    ) public {
+    ) public onlyFarmer() {
         // Add the new item as part of Harvest
         items[_upc] = Item({
             sku: sku,
@@ -217,6 +224,7 @@ contract SupplyChain {
     // Define a function 'processOlives' that allows a farmer to mark an item 'Processed'
     function processOlives(uint256 _upc)
         public
+        onlyFarmer()
         // Call modifier to check if upc has passed previous supply chain stage
         harvested(_upc)
         // Call modifier to verify caller of this function
@@ -232,6 +240,7 @@ contract SupplyChain {
     // Define a function 'bottleOil' that allows a farmer to mark an item 'Bottled'
     function bottleOil(uint256 _upc)
         public
+        onlyFarmer()
         // Call modifier to check if upc has passed previous supply chain stage
         processed(_upc)
         // Call modifier to verify caller of this function
@@ -247,6 +256,7 @@ contract SupplyChain {
     // Define a function 'sellOil' that allows a farmer to mark an item 'ForSale'
     function sellOil(uint256 _upc, uint256 _price)
         public
+        onlyFarmer()
         // Call modifier to check if upc has passed previous supply chain stage
         bottled(_upc)
         // Call modifier to verify caller of this function
@@ -267,6 +277,7 @@ contract SupplyChain {
     function buyOil(uint256 _upc)
         public
         payable
+        onlyDistributor()
         // Call modifier to check if upc has passed previous supply chain stage
         forSale(_upc)
         // Call modifer to check if buyer has paid enough
@@ -290,6 +301,7 @@ contract SupplyChain {
     // Use the above modifers to check if the item is sold
     function shipOil(uint256 _upc)
         public
+        onlyDistributor()
         // Call modifier to check if upc has passed previous supply chain stage
         sold(_upc)
         // Call modifier to verify caller of this function
@@ -307,6 +319,7 @@ contract SupplyChain {
     function receiveOil(uint256 _upc)
         public
         payable
+        onlyRetailer()
         // Call modifier to check if upc has passed previous supply chain stage
         shipped(_upc)
         // Call modifer to check if buyer has paid enough
@@ -331,6 +344,7 @@ contract SupplyChain {
     function purchaseOil(uint256 _upc)
         public
         payable
+        onlyConsumer()
         // Call modifier to check if upc has passed previous supply chain stage
         received(_upc)
         // Call modifer to check if buyer has paid enough

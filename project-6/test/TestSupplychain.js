@@ -73,10 +73,17 @@ contract("SupplyChain", function(accounts) {
     );
   };
 
+  let supplyChain;
+  before(async function() {
+    supplyChain = await SupplyChain.deployed();
+    await supplyChain.addFarmer(originFarmerID);
+    await supplyChain.addDistributor(distributorID);
+    await supplyChain.addRetailer(retailerID);
+    await supplyChain.addConsumer(consumerID);
+  });
+
   // 1st Test
   it("Testing smart contract function harvestOlives() that allows a farmer to harvest olives", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     // Mark an item as Harvested by calling function harvestOlives()
     const tx = await supplyChain.harvestOlives(
       upc,
@@ -105,8 +112,6 @@ contract("SupplyChain", function(accounts) {
 
   // 2nd Test
   it("Testing smart contract function processOlives() that allows a farmer to process olives", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     // Mark an item as Processed by calling function processOlives()
     const tx = await supplyChain.processOlives(upc, { from: originFarmerID });
 
@@ -127,8 +132,6 @@ contract("SupplyChain", function(accounts) {
 
   // 3rd Test
   it("Testing smart contract function bottleOil() that allows a farmer to bottle olive oil", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     // Mark an item as Bottled by calling function bottleOil()
     const tx = await supplyChain.bottleOil(upc, { from: originFarmerID });
 
@@ -149,8 +152,6 @@ contract("SupplyChain", function(accounts) {
 
   // 4th Test
   it("Testing smart contract function sellOil() that allows a farmer to sell olive oil", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     // Mark an item as ForSale by calling function sellOil()
     const tx = await supplyChain.sellOil(upc, productPrice, {
       from: originFarmerID
@@ -178,8 +179,6 @@ contract("SupplyChain", function(accounts) {
 
   // 5th Test
   it("Testing smart contract function buyOil() that allows a distributor to buy olive oil", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     const farmerInitialBalance = await web3.eth.getBalance(originFarmerID);
     const distributorInitialBalance = await web3.eth.getBalance(distributorID);
 
@@ -236,8 +235,6 @@ contract("SupplyChain", function(accounts) {
 
   // 6th Test
   it("Testing smart contract function shipOil() that allows a distributor to ship olive oil", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     // Mark an item as Sold by calling function shipOil()
     const tx = await supplyChain.shipOil(upc, {
       from: distributorID
@@ -270,8 +267,6 @@ contract("SupplyChain", function(accounts) {
 
   // 7th Test
   it("Testing smart contract function receiveOil() that allows a retailer to mark olive oil received", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     const retailerInitialBalance = await web3.eth.getBalance(retailerID);
     const distributorInitialBalance = await web3.eth.getBalance(distributorID);
 
@@ -334,8 +329,6 @@ contract("SupplyChain", function(accounts) {
 
   // 8th Test
   it("Testing smart contract function purchaseOil() that allows a consumer to purchase olive oil", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     const retailerInitialBalance = await web3.eth.getBalance(retailerID);
     const consumerInitialBalance = await web3.eth.getBalance(consumerID);
 
@@ -403,8 +396,6 @@ contract("SupplyChain", function(accounts) {
 
   // 9th Test
   it("Testing smart contract function fetchItemBufferOne() that allows anyone to fetch item details from blockchain", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     // Retrieve the just now saved item from blockchain by calling function fetchItem()
     const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc);
 
@@ -419,8 +410,6 @@ contract("SupplyChain", function(accounts) {
 
   // 10th Test
   it("Testing smart contract function fetchItemBufferTwo() that allows anyone to fetch item details from blockchain", async () => {
-    const supplyChain = await SupplyChain.deployed();
-
     // Retrieve the just now saved item from blockchain by calling function fetchItem()
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc);
 
