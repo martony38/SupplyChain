@@ -2,7 +2,13 @@
 
 Clone repo, install dependencies with `yarn install` then launch server with `yarn dev`. Navigate to `http://localhost:3000/` with your favorite browser with metamask installed. You can use the mnemonic in `truffle.js` to import the wallet addresses into metamask to interact with the contract (the first 5 addresses are already assigned to contract owner, farmer, distributor, retailer, and consumer).
 
-Run tests with `yarn test`
+# Testing
+
+Launch Ganache
+
+`ganache-cli -m "word put entry swing range summer father obtain other idle arrest tortoise"`
+
+Deploy contracts `truffle deploy` and run tests with `yarn test`
 
 # UML Diagrams
 
